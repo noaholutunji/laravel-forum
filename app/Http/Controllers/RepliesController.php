@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Thread;
 use App\Reply;
-use App\Http\Forms\CreatePostForm;
+use App\User;
+use App\Http\Requests\CreatePostRequest;
+use App\Notifications\YouWereMentioned;
 use Illuminate\Support\Facades\Gate;
 
 
@@ -23,9 +25,13 @@ class RepliesController extends Controller
     }
 
 
-   public function store($channelId, Thread $thread, CreatePostForm $form)
+   public function store($channelId, Thread $thread, CreatePostRequest $form)
    {
-        return $form->persist($thread);
+       return $thread->addReply([
+            'body' => request('body'),
+            'user_id' => auth()->id()
+         ])->load('owner');
+
     }
 
     public function update (Reply $reply)

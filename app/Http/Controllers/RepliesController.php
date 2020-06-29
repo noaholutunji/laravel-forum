@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Thread;
 use App\Reply;
-use App\Inspections\Spam;
+use App\Http\Forms\CreatePostForm;
+use Illuminate\Support\Facades\Gate;
+
 
 class RepliesController extends Controller
 {
@@ -22,28 +23,24 @@ class RepliesController extends Controller
     }
 
 
-   public function store($channelId, Thread $thread, Spam $spam)
+   public function store($channelId, Thread $thread, CreatePostForm $form)
    {
-       $this->validate(request(), ['body' => 'required']);
-
-       $spam->detect(request('body'));
-
-       $reply = $thread->addReply([
-           'body' => request('body'),
-           'user_id' => auth()->id()
-        ]);
-
-        if (request()->expectsJson()) {
-            return $reply->load('owner');
-        }
-
-        return back()->with('flash', 'Your reply has been left.');
+        return $form->persist($thread);
     }
 
     public function update (Reply $reply)
     {
         $this->authorize('update', $reply);
-        $reply->update(request(['body']));
+
+        try{
+
+            $this->validate(request(), ['body' => 'required|spamfree']);
+
+
+            $reply->update(request(['body']));
+        } catch (\Exception $e) {
+            return response('Sorry, your reply could not be saved at this time.', 422);
+        }
     }
 
     public function destroy(Reply $reply)
@@ -57,4 +54,6 @@ class RepliesController extends Controller
 
         return back();
     }
+
+
 }

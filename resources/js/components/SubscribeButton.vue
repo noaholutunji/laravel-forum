@@ -6,24 +6,26 @@
     export default {
         props: ['active'],
 
+        data() {
+            return {
+                isActive: this.active
+            }
+        },
+
         computed: {
             classes() {
-                return ['btn', this.active ? 'btn-primary' : 'btn-info']
+                return ['btn', this.isActive ? 'btn-primary' : 'btn-info'];
             }
         },
 
         methods: {
             subscribe() {
+                const requestType = this.isActive ? 'delete' : 'post';
 
+                axios[(requestType)](location.pathname + '/subscriptions');
 
-                axios[
-                    (this.active ? 'delete' : 'post')
-                    ](location.pathname + '/subscriptions');
-
-               this.active = ! this.active;
-
+                this.isActive = ! this.isActive;
             }
         }
-
     }
 </script>

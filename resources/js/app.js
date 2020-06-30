@@ -8,6 +8,12 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+
+window.Vue.prototype.authorize = function(handler) {
+    const { user } = window.App;
+    return !! user ? handler(user) : false;
+};
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -21,7 +27,6 @@ window.Vue = require('vue');
 
 Vue.component('flash', require('./components/Flash.vue').default);
 Vue.component('paginator', require('./components/Paginator.vue').default);
-Vue.component('subscribe-button', require('./components/SubscribeButton.vue').default);
 Vue.component('user-notifications', require('./components/UserNotifications.vue').default);
 
 Vue.component('thread-view', require('./pages/Thread.vue').default);
@@ -31,6 +36,12 @@ Vue.component('thread-view', require('./pages/Thread.vue').default);
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+
+window.events = new Vue();
+
+window.flash = function (message, level = 'success') {
+    window.events.$emit('flash', { message, level});
+};
 
 const app = new Vue({
     el: '#app',

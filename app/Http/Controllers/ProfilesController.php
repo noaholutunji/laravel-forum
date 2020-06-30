@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\User;
 use App\Activity;
+use App\User;
+use Illuminate\Http\Request;
 
 class ProfilesController extends Controller
 {
@@ -15,5 +15,4 @@ class ProfilesController extends Controller
             'activities' => Activity::feed($user)
         ]);
     }
-
 }

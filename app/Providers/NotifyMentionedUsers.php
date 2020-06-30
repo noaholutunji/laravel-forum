@@ -1,25 +1,15 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Providers;
 
-use App\Events\ThreadReceivedNewReply;
 use App\Notifications\YouWereMentioned;
+use App\Providers\ThreadReceivedNewReply;
 use App\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
 class NotifyMentionedUsers
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * Handle the event.
      *
@@ -28,14 +18,20 @@ class NotifyMentionedUsers
      */
     public function handle(ThreadReceivedNewReply $event)
     {
-
-        collect($event->reply->mentionedUsers())
-            ->map(function ($name) {
-                return User::where('name', $name)->first();
-            })
-            ->filter()
+        User::whereIn('name', $event->reply->mentionedUsers())
+            ->get()
             ->each(function ($user) use ($event) {
                 $user->notify(new YouWereMentioned($event->reply));
             });
+
+        // OR $mentionedUsers = $event->reply->mentionedUsers();
+
+        // foreach ($mentionedUsers as $name) {
+        //     $user = User::whereName($name)->first();
+
+        //     if ($user) {
+        //         $user->notify(new YouWereMentioned($event->reply));
+        //     }
+        // }
     }
 }

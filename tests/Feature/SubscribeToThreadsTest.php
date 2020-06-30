@@ -1,10 +1,9 @@
 <?php
 
-namespace Test\Feature;
-
-use Tests\TestCase;
+namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 
 class SubscribeToThreadsTest extends TestCase
 {
@@ -13,22 +12,18 @@ class SubscribeToThreadsTest extends TestCase
     /** @test */
     public function a_user_can_subscribe_to_threads()
     {
-        // Given a user is a signed in
         $this->signIn();
 
-        // And given we have a thread
+        // given we have a thread
         $thread = create('App\Thread');
 
-        // And the user subscribes to the thread
+        // and the user subscribes to the thread
         $this->post($thread->path() . '/subscriptions');
 
         $this->assertCount(1, $thread->fresh()->subscriptions);
-
-
-
     }
 
-        /** @test */
+    /** @test */
     public function a_user_can_unsubscribe_from_threads()
     {
         $this->signIn();
@@ -41,5 +36,4 @@ class SubscribeToThreadsTest extends TestCase
 
         $this->assertCount(0, $thread->subscriptions);
     }
-
 }

@@ -2,14 +2,9 @@
 
 namespace App;
 
-use App\Events\ThreadHasNewReply;
-use App\Events\ThreadReceivedNewReply;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filters\ThreadFilters;
 use App\Notifications\ThreadWasUpdated;
-use App\User;
-
+use App\Providers\ThreadReceivedNewReply;
+use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
@@ -27,31 +22,29 @@ class Thread extends Model
 
         static::deleting(function ($thread) {
             $thread->replies->each->delete();
-
         });
     }
 
     public function path()
     {
         return "/threads/{$this->channel->slug}/{$this->id}";
+        // or return '/threads/' . $this->channel->slug . '/' . $this->id;
     }
 
     public function replies()
     {
         return $this->hasMany(Reply::class);
-
     }
 
     public function creator()
     {
-         return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function channel()
     {
         return $this->belongsTo(Channel::class);
     }
-
 
     public function addReply($reply)
     {
@@ -62,12 +55,10 @@ class Thread extends Model
         return $reply;
     }
 
-
     public function scopeFilter($query, $filters)
     {
         return $filters->apply($query);
     }
-
 
     public function subscribe($userId = null)
     {
@@ -78,21 +69,17 @@ class Thread extends Model
         return $this;
     }
 
-
     public function unsubscribe($userId = null)
     {
         $this->subscriptions()
-            ->where(
-            'user_id', $userId ?: auth()->id())
+            ->where('user_id', $userId ?: auth()->id())
             ->delete();
     }
-
 
     public function subscriptions()
     {
         return $this->hasMany(ThreadSubscription::class);
     }
-
 
     public function getIsSubscribedToAttribute()
     {
@@ -103,9 +90,7 @@ class Thread extends Model
 
     public function hasUpdatesFor($user)
     {
-
         $key = $user->visitedThreadCacheKey($this);
-        // $key = sprintf("users.%s.visits.%s", auth()->id(), $this->id);
 
         return $this->updated_at > cache($key);
     }

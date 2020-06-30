@@ -3,42 +3,35 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ParticipateInThreadsTest extends TestCase
 {
     use DatabaseMigrations;
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
 
-      /** @test */
-    public function an_unauthenticated_user_may_not_participate_in_forum_threads()
+    /** @test */
+    function unauthenticated_users_may_not_replies()
     {
-       $this->withExceptionHandling()
-
+        $this->withExceptionHandling()
             ->post('/threads/some-channel/1/replies', [])
             ->assertRedirect('/login');
     }
 
-     /** @test */
+    /** @test */
     public function an_authenticated_user_may_participate_in_forum_threads()
     {
-       $this->signIn();
+        // Given we have an authenticated user
+        $this->signIn();;
 
-       $thread = create('App\Thread');
+        // And an existing thread
+        $thread = create('App\Thread');
 
-       $reply = make('App\Reply');
+        // When the user adds a reply to the thread
+        $reply = make('App\Reply');
+        $this->post($thread->path().'/replies', $reply->toArray());
 
-       $this->post($thread->path().'/replies', $reply->toArray());
-
-       $this->assertDatabaseHas('replies', ['body' => $reply->body]);
-
-       $this->assertEquals(1, $thread->fresh()->replies_count);
+        $this->assertDatabaseHas('replies', ['body' => $reply->body]);
+        $this->assertEquals(1, $thread->fresh()->replies_count);
     }
 
     /** @test */
@@ -49,9 +42,8 @@ class ParticipateInThreadsTest extends TestCase
         $thread = create('App\Thread');
         $reply = make('App\Reply', ['body' => null]);
 
-        $this->json('post', $thread->path() . '/replies', $reply->toArray())
-        ->assertStatus(422);
-
+        $this->json('post', $thread->path().'/replies', $reply->toArray())
+            ->assertStatus(422);
     }
 
     /** @test */
@@ -64,8 +56,8 @@ class ParticipateInThreadsTest extends TestCase
         $this->delete("/replies/{$reply->id}")
             ->assertRedirect('login');
 
-        $this->signIn();
-        $this->delete("/replies/{$reply->id}")
+        $this->signIn()
+            ->delete("/replies/{$reply->id}")
             ->assertStatus(403);
     }
 
@@ -73,46 +65,47 @@ class ParticipateInThreadsTest extends TestCase
     function authorized_users_can_delete_replies()
     {
         $this->signIn();
+
         $reply = create('App\Reply', ['user_id' => auth()->id()]);
 
-        $this->delete("/replies/{$reply->id}");
+        $this->delete("/replies/{$reply->id}")->assertStatus(302);
 
         $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
-
         $this->assertEquals(0, $reply->thread->fresh()->replies_count);
     }
 
     /** @test */
-
     function authorized_users_can_update_replies()
     {
         $this->signIn();
+
         $reply = create('App\Reply', ['user_id' => auth()->id()]);
 
-        $updatedReply = 'You have been changed, fool.';
-        $this->patch("replies/{$reply->id}", ['body' =>  $updatedReply]);
+        $updatedReply = 'You have been changed';
 
-        $this->assertDatabaseHas('replies', ['id' => $reply-> id, 'body' =>  $updatedReply]);
+        $this->patch("/replies/{$reply->id}", ['body' => $updatedReply]);
+
+        $this->assertDatabaseHas('replies', ['id' => $reply->id, 'body' => $updatedReply]);
     }
 
-     /** @test */
-     function unauthorized_users_cannot_update_replies()
-     {
-         $this->withExceptionHandling();
+    /** @test */
+    function unauthorized_users_cannot_update_replies()
+    {
+        $this->withExceptionHandling();
 
-         $reply = create('App\Reply');
+        $reply = create('App\Reply');
 
-         $this->patch("/replies/{$reply->id}")
-             ->assertRedirect('login');
+        $this->patch("/replies/{$reply->id}")
+            ->assertRedirect('login');
 
-         $this->signIn();
-         $this->patch("/replies/{$reply->id}")
-             ->assertStatus(403);
-     }
+        $this->signIn()
+            ->patch("/replies/{$reply->id}")
+            ->assertStatus(403);
+    }
 
-     /** @test */
-     function replies_that_contain_spam_may_not_be_created()
-     {
+    /** @test */
+    function replies_that_contain_spam_may_not_be_created()
+    {
         $this->withExceptionHandling();
 
         $this->signIn();
@@ -123,11 +116,11 @@ class ParticipateInThreadsTest extends TestCase
             'body' => 'Yahoo Customer Support'
         ]);
 
-        $this->json('post', $thread->path() . '/replies', $reply->toArray())
+        $this->json('post', $thread->path().'/replies', $reply->toArray())
             ->assertStatus(422);
-     }
+    }
 
-     /** @test */
+    /** @test */
     function users_may_only_reply_a_maximum_of_once_per_minute()
     {
         $this->withExceptionHandling();
@@ -135,15 +128,15 @@ class ParticipateInThreadsTest extends TestCase
         $this->signIn();
 
         $thread = create('App\Thread');
+
         $reply = make('App\Reply', [
-            'body' => 'My simple reply.'
+            'body' => 'My simple reply'
         ]);
 
-        $this->post($thread->path() . '/replies', $reply->toArray())
+        $this->post($thread->path().'/replies', $reply->toArray())
             ->assertStatus(201);
 
-        $this->post($thread->path() . '/replies', $reply->toArray())
+        $this->post($thread->path().'/replies', $reply->toArray())
             ->assertStatus(429);
     }
-
 }

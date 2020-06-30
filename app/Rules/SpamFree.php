@@ -2,9 +2,9 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
-use Exception;
 use App\Inspections\Spam;
+use Exception;
+use Illuminate\Contracts\Validation\Rule;
 
 class SpamFree implements Rule
 {
@@ -32,7 +32,6 @@ class SpamFree implements Rule
         } catch (Exception $e) {
             return false;
         }
-
     }
 
     /**
@@ -42,6 +41,6 @@ class SpamFree implements Rule
      */
     public function message()
     {
-        return 'The :attribute contains spam.';
+        return 'The :attribute contains spam';
     }
 }

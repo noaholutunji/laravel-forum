@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Forum') }}</title>
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -18,31 +18,30 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
     <style>
-        body {padding-bottom:  100px; }
         .level { display: flex; align-items: center; }
         .flex { flex: 1; }
-        .mr-1 { margin-right: 1em; }
         [v-cloak] {display: none;}
     </style>
 
     <script>
-       window.App = {!! json_encode([
-            'csrfToken' => csrf_token(),
+        window.App = {!! json_encode([
             'signedIn' => Auth::check(),
-            'user' => Auth::user()
+            'user' => Auth::user(),
         ]) !!}
     </script>
 
+    @yield('header')
 </head>
 <body>
     <div id="app">
-        @include ('layouts.nav')
-        <main class="py-4">
+        @include('layouts.nav')
+
+        <main class="py-5">
             @yield('content')
+
+            <flash message="{{ session('flash') }}"></flash>
         </main>
-        <flash message="{{ session('flash') }}"></flash>
     </div>
 </body>
 </html>

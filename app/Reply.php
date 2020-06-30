@@ -2,12 +2,11 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class Reply extends Model
 {
-
     use Favoritable, RecordsActivity;
 
     protected $guarded = [];
@@ -34,12 +33,10 @@ class Reply extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-
     public function thread()
     {
         return $this->belongsTo(Thread::class);
     }
-
 
     public function wasJustPublished()
     {
@@ -48,16 +45,20 @@ class Reply extends Model
 
     public function mentionedUsers()
     {
-        preg_match_all('/\@([^\s\.]+)/', $this->body, $matches);
+        // find any mentioned users in the reply's body and notify them
+        preg_match_all('/@([\w\-]+)/', $this->body, $matches);
 
         return $matches[1];
-
     }
-
 
     public function path()
     {
-        return $this->thread->path() . "#reply-{$this->id}" ;
+        return $this->thread->path() . "#reply-{$this->id}";
+    }
+
+    public function setBodyAttribute($body)
+    {
+        $this->attributes['body'] = preg_replace('/@([\w\-]+)/', '<a href="/profiles/$1">$0</a>', $body);
     }
 
 }

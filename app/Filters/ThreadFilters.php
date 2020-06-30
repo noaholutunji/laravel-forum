@@ -3,8 +3,6 @@
 namespace App\Filters;
 
 use App\User;
-use Faker\Provider\File;
-use Illuminate\Http\Request;
 
 class ThreadFilters extends Filters
 {
@@ -20,6 +18,7 @@ class ThreadFilters extends Filters
     protected function popular()
     {
         $this->builder->getQuery()->orders = [];
+
         return $this->builder->orderBy('replies_count', 'desc');
     }
 

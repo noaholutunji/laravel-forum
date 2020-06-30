@@ -1,17 +1,17 @@
-<div class="card mt-3">
+<div class="card mb-3">
     <div class="card-header">
-        <div class="level">
-            <span class="flex">
+       <div class="level">
+           <span class="flex">
                 {{ $heading }}
+           </span>
+
+            <span>
+                {{-- {{ $thread->created_at->diffForHumans()}} --}}
             </span>
-        </div>
+       </div>
     </div>
 
     <div class="card-body">
-      {{ $body }}
+        {{ $body }}
     </div>
 </div>
-
-
-
-

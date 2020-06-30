@@ -1,23 +1,11 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Providers;
 
-use App\Events\ThreadReceivedNewReply;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Providers\ThreadReceivedNewReply;
 
 class NotifySubscribers
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * Handle the event.
      *
@@ -28,7 +16,7 @@ class NotifySubscribers
     {
         $thread = $event->reply->thread;
 
-
+        // prepare notifications
         $thread->subscriptions
             ->where('user_id', '!=', $event->reply->user_id)
             ->each

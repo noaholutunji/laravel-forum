@@ -5,10 +5,8 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card-header">
-                    <h1>
-                        {{ $profileUser->name }}
-                        {{-- <small>Since {{ $profileUser->created_at->diffForHumans() }}</small> --}}
-                    </h1>
+
+                    <avatar-form :user="{{ $profileUser }}"></avatar-form>
                 </div>
 
                 @forelse ($activities as $date => $activity)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Channel;
 use App\Trending;
 use App\Filters\ThreadFilters;
+use Illuminate\Support\Str;
 use App\Rules\SpamFree;
 use App\Thread;
 use Illuminate\Http\Request;
@@ -66,7 +67,8 @@ class ThreadsController extends Controller
             'user_id' => auth()->id(),
             'channel_id' => request('channel_id'),
             'title' => request('title'),
-            'body' => request('body')
+            'body' => request('body'),
+            'slug' => Str::slug(request('title'))
         ]);
 
         return redirect($thread->path())

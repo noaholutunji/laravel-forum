@@ -1,6 +1,6 @@
 <template>
     <div :id="'reply-'+id" class="card">
-        <div class="card-header">
+        <div class="card-header" :class="isBest ? 'card bg-info' : 'card'">
             <div class="level">
                 <div class="flex">
                     <a :href="'/profiles/'+data.owner.name"
@@ -30,9 +30,12 @@
             <div v-else v-html="body"></div>
         </div>
 
-        <div class="card-footer level" v-if="canUpdate">
-            <button class="btn btn-info btn-sm mr-2" @click="editing = true">Edit</button>
-            <button class="btn btn-danger btn-sm" @click="destroy">Delete</button>
+        <div class="card-footer level" >
+            <div v-if="authorize('updateReply', reply)">
+                <button class="btn btn-info btn-sm mr-2" @click="editing = true">Edit</button>
+                <button class="btn btn-danger btn-sm" @click="destroy">Delete</button>
+            </div>
+            <button class="btn btn-info btn-sm ml-a" @click="markAsBestReply" v-show="! isBest">Best Reply?</button>
         </div>
 
     </div>
@@ -51,7 +54,9 @@
             return {
                 editing: false,
                 id: this.data.id,
-                body: this.data.body
+                body: this.data.body,
+                isBest: false.isBest,
+                reply: this.data
             }
         },
 
@@ -60,14 +65,7 @@
                 return moment(this.data.created_at).fromNow() + '...';
             },
 
-            signedIn() {
-                return window.App.signedIn;
-            },
 
-            canUpdate() {
-                return this.authorize(user => this.data.user_id == user.id);
-                //or return this.data.user_id == window.App.user.id;
-            }
         },
 
         methods: {
@@ -90,6 +88,10 @@
                 this.$emit('deleted', this.data.id);
 
                 flash('Reply was deleted');
+            },
+
+            markAsBestReply() {
+                this.isBest = true;
             }
         }
     }

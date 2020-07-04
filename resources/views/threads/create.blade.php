@@ -36,6 +36,10 @@
                         </div>
 
                         <div class="form-group">
+                                <div class="g-recaptcha" data-sitekey="6Lf4Jq0ZAAAAAJzT4xbiV4wXBDr_BRHStHm9Tunu"></div>
+                            </div>
+
+                        <div class="form-group">
                             <button type="submit" class="btn btn-primary">Publish</button>
                         </div>
 

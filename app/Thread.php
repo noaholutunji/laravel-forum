@@ -6,11 +6,12 @@ use App\Notifications\ThreadWasUpdated;
 use App\Providers\ThreadReceivedNewReply;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Redis;
 
 class Thread extends Model
 {
-    use RecordsActivity;
+    use RecordsActivity, Searchable;
 
     protected $guarded = [];
 

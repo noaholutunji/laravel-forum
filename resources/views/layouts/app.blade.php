@@ -11,20 +11,19 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.2.3/trix.min.css">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <style>
         .level { display: flex; align-items: center; }
-        .level-item { margin-right: 1em }
         .flex { flex: 1; }
-        .ml-a {margin-left: auto;}
-        [v-cloak] {display: none;}
+        .ais-highlight > em { background-color: yellow; font-style: normal; }
+        [v-cloak] {display: none; }
     </style>
 
     <script>
@@ -33,8 +32,6 @@
             'user' => Auth::user(),
         ]) !!}
     </script>
-
-
 
     @yield('header')
 </head>

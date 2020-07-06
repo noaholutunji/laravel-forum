@@ -13,21 +13,11 @@ class PleaseConfirmYourEmail extends Mailable implements ShouldQueue
 
     public $user;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
     public function __construct($user)
     {
         $this->user = $user;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
     public function build()
     {
         return $this->markdown('emails.confirm-email');

@@ -2,14 +2,15 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 
 class LockThreadsTest extends TestCase
 {
     use DatabaseMigrations;
 
-    function non_administrators_may_not_lock_threads()
+    /** @test */
+    function non_administrators_may_lock_threads()
     {
         $this->withExceptionHandling();
 
@@ -17,15 +18,16 @@ class LockThreadsTest extends TestCase
 
         $thread = create('App\Thread', ['user_id' => auth()->id()]);
 
+        // hit the endpoint, that will update the 'locked' attribute to true for the thread
         $this->post(route('locked-threads.store', $thread))->assertStatus(403);
 
-        $this->assertFalse($thread->fresh()->locked);
+        $this->assertFalse(!! $thread->fresh()->locked);
     }
 
     /** @test */
     function administrators_can_lock_threads()
     {
-        $this->signIn(factory('App\User')->states('administrator')->create());
+        $this->signIn(factory('App\User')->states('adminstrator')->create());
 
         $thread = create('App\Thread', ['user_id' => auth()->id()]);
 
@@ -37,7 +39,7 @@ class LockThreadsTest extends TestCase
     /** @test */
     function administrators_can_unlock_threads()
     {
-        $this->signIn(factory('App\User')->states('administrator')->create());
+        $this->signIn(factory('App\User')->states('adminstrator')->create());
 
         $thread = create('App\Thread', ['user_id' => auth()->id(), 'locked' => true]);
 

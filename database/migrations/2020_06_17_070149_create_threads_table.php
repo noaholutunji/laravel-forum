@@ -30,6 +30,7 @@ class CreateThreadsTable extends Migration
                 ->references('id')
                 ->on('replies')
                 ->onDelete('set null');
+
         });
     }
 

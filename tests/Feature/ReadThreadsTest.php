@@ -101,8 +101,8 @@ class ReadThreadsTest extends TestCase
 
         $this->assertSame(0, $thread->visits);
 
-        // $this->call('GET', $thread->path());
+        $this->call('GET', $thread->path());
 
-        // $this->assertEquals(1, $thread->fresh()->visits);
+        $this->assertEquals(1, $thread->fresh()->visits);
     }
 }

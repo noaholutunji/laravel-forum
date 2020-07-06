@@ -7,14 +7,20 @@
         methods: {
             onChange(e) {
                 if (! e.target.files.length) return;
-                let file = e.target.files[0];
-                let reader = new FileReader();
+
+                const file = e.target.files[0];
+
+                const reader = new FileReader();
+
                 reader.readAsDataURL(file);
+
                 reader.onload = e => {
-                    let src = e.target.result;
-                    this.$emit('loaded', { src, file });
-                };
-            }
+                    this.$emit('loaded', {
+                        src: e.target.result,
+                        file: file
+                    });
+                }
+            },
         }
     }
 </script>

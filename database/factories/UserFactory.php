@@ -34,9 +34,8 @@ $factory->state(User::class, 'unconfirmed', function () {
     ];
 });
 
-$factory->state(User::class, 'administrator', function () {
+$factory->state(User::class, 'adminstrator', function () {
     return [
-        'name' => 'JohnDoe'
+        'name' => 'waliu'
     ];
 });
-

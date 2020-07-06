@@ -2,12 +2,10 @@
 
 namespace App;
 
-use App\Notifications\ThreadWasUpdated;
 use App\Providers\ThreadReceivedNewReply;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
-use Illuminate\Support\Facades\Redis;
 
 class Thread extends Model
 {
@@ -66,7 +64,6 @@ class Thread extends Model
         return $reply;
     }
 
-
     public function scopeFilter($query, $filters)
     {
         return $filters->apply($query);
@@ -114,8 +111,10 @@ class Thread extends Model
 
     public function setSlugAttribute($value)
     {
-        if (static::whereSlug($slug = Str::slug($value))->exists()) {
-            $slug = "{$slug}-{$this->id}";
+        $slug = Str::slug($value);
+
+        if (static::whereSlug($slug)->exists()) {
+            $slug = "{$slug}-" . $this->id;
         }
 
         $this->attributes['slug'] = $slug;
@@ -123,9 +122,11 @@ class Thread extends Model
 
     public function markBestReply(Reply $reply)
     {
-        $this->best_reply_id = $reply->id;
-
-        $this->save();
+        $this->update(['best_reply_id' => $reply->id]);
     }
 
+    public function toSearchableArray()
+    {
+        return $this->toArray() + ['path' => $this->path()];
+    }
 }

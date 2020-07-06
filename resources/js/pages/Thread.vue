@@ -9,45 +9,47 @@
 
         data() {
             return {
-                repliesCount: this.thread.replies_count,
+                repliesCount: this.thread.replies,
                 locked: this.thread.locked,
                 editing: false,
                 title: this.thread.title,
                 body: this.thread.body,
-                form: {},
-                editing: false
-            };
+                form: {}
+            }
         },
 
-        created() {
+        created () {
             this.resetForm();
         },
 
-       methods: {
+        methods: {
             toggleLock () {
-                let uri =  `/locked-threads/${this.thread.slug}`;
-                axios[
-                    this.locked ? 'delete' : 'post'](uri);
+            const uri = `/locked-threads/${this.thread.slug}`
+
+                axios[this.locked ? 'delete' : 'post'](uri);
 
                 this.locked = ! this.locked;
             },
 
-            update() {
-                let uri = `/threads/${this.thread.channel.slug}/${this.thread.slug}`;
+            update () {
+                const uri = `/threads/${this.thread.channel.slug}/${this.thread.slug}`;
 
-                axios.patch(uri, this.form ).then(() => {
+                axios.patch(uri, this.form).then(() => {
                     this.editing = false;
                     this.title = this.form.title;
                     this.body = this.form.body;
+
                     flash('Your thread has been updated.')
-                });
+                })
             },
 
-            resetForm() {
+            resetForm () {
                 this.form = {
                     title: this.thread.title,
                     body: this.thread.body
-                }
+                };
+
+                this.editing = false;
             }
         }
     }

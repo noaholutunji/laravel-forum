@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Events\ThreadHasNewReply;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filters\ThreadFilters;
 use App\Notifications\ThreadWasUpdated;
+use App\User;
 
 
 class Thread extends Model
@@ -49,17 +51,25 @@ class Thread extends Model
         return $this->belongsTo(Channel::class);
     }
 
+
     public function addReply($reply)
     {
         $reply = $this->replies()->create($reply);
 
-        $this->subscriptions
-              ->where('user_id', '!=', $reply->user_id)
-              ->each->
-              notify($reply);
+        $this->notifySubscribers($reply);
 
         return $reply;
     }
+
+    public function notifySubscribers($reply)
+    {
+        $this->subscriptions
+            ->where('user_id', '!=', $reply->user_id)
+            ->each
+            ->notify($reply);
+
+    }
+
 
     public function scopeFilter($query, $filters)
     {
@@ -97,5 +107,16 @@ class Thread extends Model
         return $this->subscriptions()
             ->where('user_id', auth()->id())
             ->exists();
+    }
+
+    public function hasUpdatesFor($user)
+    {
+
+        // $key = $user->visitedThreadCacheKey($this);
+        $key = sprintf("users.%s.visits.%s", auth()->id(), $this->id);
+
+
+
+        return $this->updated_at > cache($key);
     }
 }

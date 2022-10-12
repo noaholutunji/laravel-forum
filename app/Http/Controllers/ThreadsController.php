@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Filters\ThreadFilters;
-use App\Thread;
 use App\Channel;
+use App\Filters\ThreadFilters;
+use App\Rules\SpamFree;
+use App\Thread;
 use Illuminate\Http\Request;
 
 class ThreadsController extends Controller
 {
-
     public function __construct()
     {
-        $this->middleware('auth')->except(['index','show']);
+        $this->middleware('auth')->except(['index', 'show']);
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -21,10 +22,9 @@ class ThreadsController extends Controller
      */
     public function index(Channel $channel, ThreadFilters $filters)
     {
-
         $threads = $this->getThreads($channel, $filters);
 
-        if (request()->wantsJson()){
+        if(request()->wantsJson()) {
             return $threads;
         }
 
@@ -49,19 +49,17 @@ class ThreadsController extends Controller
      */
     public function store(Request $request)
     {
-
         $this->validate($request, [
-            'title' => 'required|spamfree',
-            'body' => 'required|spamfree',
+            'title' => ['required', new SpamFree],
+            'body' => ['required', new SpamFree],
             'channel_id' => 'required|exists:channels,id'
         ]);
-
 
         $thread = Thread::create([
             'user_id' => auth()->id(),
             'channel_id' => request('channel_id'),
             'title' => request('title'),
-            'body' => request('body'),
+            'body' => request('body')
         ]);
 
         return redirect($thread->path())
@@ -114,12 +112,11 @@ class ThreadsController extends Controller
      */
     public function destroy($channel, Thread $thread)
     {
-
-       $this->authorize('update', $thread);
+        $this->authorize('update', $thread);
 
         $thread->delete();
 
-        if (request()->wantsJson()) {
+        if (request()->wantsJson()){
             return response([], 204);
         }
 
@@ -130,10 +127,10 @@ class ThreadsController extends Controller
     {
         $threads = Thread::latest()->filter($filters);
 
-        if ($channel->exists) {
+        if($channel->exists) {
             $threads->where('channel_id', $channel->id);
         }
 
-        return $threads->get();
+        return $threads->paginate(25);
     }
 }

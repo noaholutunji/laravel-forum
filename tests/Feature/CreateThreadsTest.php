@@ -25,12 +25,15 @@ class CreateThreadsTest extends TestCase
     /** @test */
     function an_authenticated_user_can_create_new_forum_threads()
     {
+        // Given we have a signed user
         $this->signIn();
 
+        // When we hit the endpoint to create a new thread
         $thread = make('App\Thread');
 
         $response = $this->post('/threads', $thread->toArray());
 
+        // Then, when we visit the thread page
         $this->get($response->headers->get('Location'))
             ->assertSee($thread->title)
             ->assertSee($thread->body);
@@ -59,7 +62,7 @@ class CreateThreadsTest extends TestCase
             ->assertSessionHasErrors('channel_id');
 
         $this->publishThread(['channel_id' => 999])
-            ->assertSessionHasErrors('channel_id');
+        ->assertSessionHasErrors('channel_id');
     }
 
     /** @test */
@@ -91,9 +94,19 @@ class CreateThreadsTest extends TestCase
         $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
 
         $this->assertEquals(0, Activity::count());
+
+        //OR $this->assertDatabaseMissing('activities', [
+        //     'subject_id' => $thread->id,
+        //     'subject_type' => get_class($thread)
+        // ]);
+
+        // $this->assertDatabaseMissing('activities', [
+        //     'subject_id' => $reply->id,
+        //     'subject_type' => get_class($reply)
+        // ]);
     }
 
-    protected function publishThread($overrides = [])
+    public function publishThread($overrides = [])
     {
         $this->withExceptionHandling()->signIn();
 

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 abstract class Filters
 {
-    protected $request, $builder;
+    protected $builder, $request;
 
     protected $filters = [];
 
@@ -23,7 +23,6 @@ abstract class Filters
 
         foreach ($this->getFilters() as $filter => $value) {
             if (method_exists($this, $filter)) {
-
                 $this->$filter($value);
             }
         }
@@ -35,4 +34,5 @@ abstract class Filters
     {
         return $this->request->only($this->filters);
     }
+
 }

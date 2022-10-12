@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Activity;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+
 use Tests\TestCase;
 
 class ActivityTest extends TestCase
@@ -40,7 +41,6 @@ class ActivityTest extends TestCase
         $this->assertEquals(2, Activity::count());
     }
 
-
     /** @test */
     function it_fetches_a_feed_for_any_user()
     {
@@ -62,5 +62,3 @@ class ActivityTest extends TestCase
         ));
     }
 }
-
-

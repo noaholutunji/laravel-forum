@@ -2,10 +2,10 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'avatar_path'
     ];
 
     /**
@@ -26,7 +26,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'email'
+        'password', 'remember_token', 'email',
     ];
 
     /**
@@ -58,12 +58,6 @@ class User extends Authenticatable
         return $this->hasMany(Activity::class);
     }
 
-
-    /**
-     * Record that the user has read the given thread.
-     *
-     * @param Thread $thread
-     */
     public function read($thread)
     {
         cache()->forever(
@@ -72,12 +66,6 @@ class User extends Authenticatable
         );
     }
 
-    /**
-     * Get the cache key for when a user reads a thread.
-     *
-     * @param  Thread $thread
-     * @return string
-     */
     public function visitedThreadCacheKey($thread)
     {
         return sprintf("users.%s.visits.%s", $this->id, $thread->id);

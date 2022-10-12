@@ -4,10 +4,11 @@
             <reply :data="reply" @deleted="remove(index)"></reply>
         </div>
 
-        <paginator :dataSet="dataSet" @changed="fetch"></paginator>
+        <div class="mt-3">
+            <paginator :dataSet="dataSet" @changed="fetch"></paginator>
+        </div>
 
-        <new-reply  @created="add"></new-reply>
-
+        <new-reply @created="add"></new-reply>
     </div>
 </template>
 
@@ -23,36 +24,35 @@
 
         data() {
             return {
-                dataSet: false,
-
+                dataSet: false
             }
-
         },
 
         created() {
-            this.fetch();
+            this.fetch()
         },
 
         methods: {
             fetch(page) {
-                axios.get(this.url(page)).then(this.refresh);
+                axios.get(this.url(page))
+                    .then(this.refresh);
             },
 
             url(page) {
                 if (! page) {
-                    let query = location.search.match(/page=(\d+)/);
+                    const query = location.search.match(/page=(\d+)/);
 
-                   page = query ? query[1] : 1;
+                    page = query ? query[1] : 1;
                 }
                 return `${location.pathname}/replies?page=${page}`;
             },
 
-           refresh({data}) {
+            refresh({data}) {
                 this.dataSet = data;
                 this.items = data.data;
 
                 window.scrollTo(0, 0);
-            }
+            },
         }
     }
 </script>

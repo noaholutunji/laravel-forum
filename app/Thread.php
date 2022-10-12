@@ -5,6 +5,7 @@ namespace App;
 use App\Notifications\ThreadWasUpdated;
 use App\Providers\ThreadReceivedNewReply;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Redis;
 
 class Thread extends Model
 {
@@ -94,4 +95,5 @@ class Thread extends Model
 
         return $this->updated_at > cache($key);
     }
+
 }

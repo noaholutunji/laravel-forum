@@ -5,10 +5,12 @@
 use App\Channel;
 use App\Reply;
 use App\Thread;
+use Illuminate\Support\Str;
 use Faker\Generator as Faker;
 use Ramsey\Uuid\Uuid;
 
 $factory->define(Thread::class, function (Faker $faker) {
+    $title = $faker->sentence;
     return [
         'user_id' => function () {
             return factory('App\User')->create()->id;
@@ -16,9 +18,10 @@ $factory->define(Thread::class, function (Faker $faker) {
         'channel_id' => function () {
             return factory('App\Channel')->create()->id;
         },
-        'title' => $faker->sentence,
+        'title' => $title,
         'body' => $faker->paragraph,
-        'visits' => 0
+        'visits' => 0,
+        'slug' => Str::slug($title)
     ];
 });
 

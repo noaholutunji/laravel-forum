@@ -3,25 +3,27 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
+import InstantSearch from 'vue-instantsearch';
 
 require('./bootstrap');
 
 window.Vue = require('vue');
 
-let authorizations = require('./authorizations')
+Vue.use(InstantSearch);
+
+const authorizations = require('./authorization');
+
 
 window.Vue.prototype.authorize = function(...params) {
-     if (! window.App.signedIn) return false;
+    if ( !window.App.signedIn ) return false;
 
-     if (typeof params[0] === 'string') {
+    if (typeof params[0] === 'string') {
         return authorizations[params[0]](params[1]);
-     }
-
-    // return !! user ? handler(user) : false;
+    }
     return params[0](window.App.user);
 };
 
-Vue.prototype.signedIn = window.App.signedIn;
+window.Vue.prototype.signedIn = window.App.signedIn;
 
 /**
  * The following block of code may be used to automatically register your
@@ -38,6 +40,7 @@ Vue.component('flash', require('./components/Flash.vue').default);
 Vue.component('paginator', require('./components/Paginator.vue').default);
 Vue.component('user-notifications', require('./components/UserNotifications.vue').default);
 Vue.component('avatar-form', require('./components/AvatarForm.vue').default);
+Vue.component('wysiwyg', require('./components/Wysiwyg.vue').default);
 
 Vue.component('thread-view', require('./pages/Thread.vue').default);
 

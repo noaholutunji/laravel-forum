@@ -9,10 +9,10 @@ class BestRepliesController extends Controller
 {
     public function store(Reply $reply)
     {
+        $this->authorize('update', $reply->thread); // the thread policy
 
-        $this->authorize('update', $reply->thread);
+        // OR abort_if($reply->thread->user_id !== auth()->id(), 401);
 
         $reply->thread->markBestReply($reply);
     }
-
 }

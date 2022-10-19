@@ -1,6 +1,6 @@
 <template>
     <div :id="'reply-'+id" class="card">
-        <div class="card-header" :class="isBest ? 'card bg-info' : 'card'">
+        <div class="card-header" :class="isBest ? 'bg-success' : ''">
             <div class="level">
                 <div class="flex">
                     <a :href="'/profiles/'+reply.owner.name"
@@ -18,7 +18,7 @@
             <div v-if="editing">
                 <form @submit="update">
                     <div class="form-group">
-                        <textarea class="form-control" v-model="body" required></textarea>
+                        <wysiwyg v-model="body"></wysiwyg>
                     </div>
 
                     <button class="btn btn-sm btn-primary">Update</button>
@@ -35,7 +35,7 @@
                 <button class="btn btn-info btn-sm mr-2" @click="editing = true">Edit</button>
                 <button class="btn btn-danger btn-sm" @click="destroy">Delete</button>
             </div>
-            <button class="btn btn-info btn-sm ml-a" @click="markAsBestReply" v-if="authorize('owns', reply.thread)">Best Reply?</button>
+            <button class="btn btn-warning btn-sm ml-auto" @click="markBestReply" v-if="authorize('owns', reply.thread)">Best Reply?</button>
         </div>
 
     </div>
@@ -63,14 +63,12 @@
             ago() {
                 return moment(this.reply.created_at).fromNow() + '...';
             },
-
-
         },
 
         created () {
-            window.events.$on('best-reply-selected', id => {
+            window.events.$on('best_reply-selected', id => {
                 this.isBest = (id === this.id);
-            });
+            })
         },
 
         methods: {
@@ -79,7 +77,7 @@
                     body: this.body
                 })
                 .catch(error => {
-                    flash(error.response.data, 'danger');
+                    flash(error.response.reply, 'danger');
                 });
 
                 this.editing = false;
@@ -95,11 +93,10 @@
                 flash('Reply was deleted');
             },
 
-            markAsBestReply() {
+            markBestReply() {
+                axios.post('/replies/' + this.id + '/best');
 
-                axios.post('/replies/' + this.id + '/best')
-
-                window.events.$emit('best-reply-selected', this.id);
+                window.events.$emit('best_reply-selected', this.id);
             }
         }
     }

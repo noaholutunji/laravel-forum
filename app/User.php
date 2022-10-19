@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -62,10 +63,14 @@ class User extends Authenticatable
     public function confirm()
     {
         $this->confirmed = true;
-
         $this->confirmation_token = null;
 
         $this->save();
+    }
+
+    public function isAdmin()
+    {
+        return in_array($this->name, ['waliu']);
     }
 
     public function read($thread)
@@ -85,14 +90,8 @@ class User extends Authenticatable
         return asset("/storage/" . $avatar);
     }
 
-
     public function visitedThreadCacheKey($thread)
     {
         return sprintf("users.%s.visits.%s", $this->id, $thread->id);
-    }
-
-    public function isAdmin()
-    {
-        return in_array($this->name, ['JohnDoe', 'JaneDoe']);
     }
 }

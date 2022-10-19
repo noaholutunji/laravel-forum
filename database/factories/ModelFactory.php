@@ -5,12 +5,13 @@
 use App\Channel;
 use App\Reply;
 use App\Thread;
-use Illuminate\Support\Str;
 use Faker\Generator as Faker;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Str;
 
 $factory->define(Thread::class, function (Faker $faker) {
     $title = $faker->sentence;
+
     return [
         'user_id' => function () {
             return factory('App\User')->create()->id;

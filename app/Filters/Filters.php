@@ -34,5 +34,4 @@ abstract class Filters
     {
         return $this->request->only($this->filters);
     }
-
 }

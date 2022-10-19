@@ -2,10 +2,9 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\RedirectIfEmailNotConfirmed;
 use App\Http\Middleware\Administrator;
+use App\Http\Middleware\RedirectIfEmailNotConfirmed;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
-use Predis\Profile\RedisProfile;
 
 class Kernel extends HttpKernel
 {

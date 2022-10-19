@@ -41,6 +41,7 @@ class RepliesController extends Controller
         request()->validate(['body' => 'required|spamfree']);
 
         $reply->update(request(['body']));
+        // OR $reply->update(['body' => request('body')]);
     }
 
     public function destroy(Reply $reply)

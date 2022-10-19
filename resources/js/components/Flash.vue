@@ -9,7 +9,7 @@
 
         data() {
             return {
-                body:  this.message,
+                body: this.message,
                 level: 'success',
                 show: false
             }

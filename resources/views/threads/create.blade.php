@@ -39,7 +39,7 @@
                         </div>
 
                         <div class="form-group">
-                            <div class="g-recaptcha" data-sitekey="6Lf4Jq0ZAAAAAJzT4xbiV4wXBDr_BRHStHm9Tunu"></div>
+                            <div class="g-recaptcha" data-sitekey="6LdZ8c0bAAAAAB-E_y_PZhv5q5CMTP2YZC7EgCDy"></div>
                         </div>
 
                         <div class="form-group">
